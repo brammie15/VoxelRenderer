@@ -4,6 +4,12 @@
 cmake_minimum_required (VERSION 3.0)
 project (gloom)
 
+# set c++ 17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
 #
 # CMake setup
 #
@@ -78,3 +84,15 @@ target_link_libraries (${PROJECT_NAME}
                        ${GLAD_LIBRARIES})
 set_target_properties (${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+## Copy shaders to build directory with a symlink
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+                   ${CMAKE_SOURCE_DIR}/gloom/shaders
+                   $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders)
+
+## Copy assets folder to build folder
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/gloom/assets
+                   $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets)
